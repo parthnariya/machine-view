@@ -12,11 +12,23 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { Outlet, NavLink } from 'react-router';
+import { Outlet, NavLink, useLocation } from 'react-router';
 
-import { ROUTE_PATHS } from '@/routes/path';
+import { ROUTE_PATHS, ROUTE_PATHS_TITLES } from '@/routes/path';
 
 const RootLayout = () => {
+  const location = useLocation();
+
+  const currentRouteKey = Object.keys(ROUTE_PATHS).find(
+    (key) =>
+      ROUTE_PATHS[key as keyof typeof ROUTE_PATHS] ===
+      location.pathname.slice(1),
+  ) as keyof typeof ROUTE_PATHS | undefined;
+
+  const pageTitle = currentRouteKey
+    ? ROUTE_PATHS_TITLES[currentRouteKey]
+    : 'Unknown Page';
+
   return (
     <Box
       sx={{
@@ -24,31 +36,60 @@ const RootLayout = () => {
         flexDirection: 'column',
         width: '100vw',
         height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <CssBaseline />
       <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        position="static"
         component={'header'}
+        sx={{ flexShrink: 0, zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
         <Toolbar>
           <Typography variant="h6" noWrap>
-            Page 1
+            {pageTitle}
           </Typography>
         </Toolbar>
       </AppBar>
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
-        <Drawer variant="permanent" style={{ display: 'block' }}>
-          <Toolbar />
+        <Drawer
+          variant="permanent"
+          sx={{
+            flexShrink: 0,
+            width: 240,
+            '& .MuiDrawer-paper': {
+              width: 240,
+              boxSizing: 'border-box',
+              position: 'relative',
+            },
+          }}
+        >
           <List component="nav">
-            <ListItem component={NavLink} to={ROUTE_PATHS.SCATTER_PAGE}>
+            <ListItem
+              component={NavLink}
+              to={ROUTE_PATHS.SCATTER_PAGE}
+              sx={{
+                textDecoration: 'none',
+                '&.active': {
+                  backgroundColor: (theme) => theme.palette.action.selected,
+                },
+              }}
+            >
               <ListItemIcon>
                 <SsidChartIcon />
               </ListItemIcon>
               <ListItemText primary="Scatter Page" />
             </ListItem>
-            <ListItem component={NavLink} to={ROUTE_PATHS.TREE_VISUALIZATION}>
+            <ListItem
+              component={NavLink}
+              to={ROUTE_PATHS.TREE_VISUALIZATION}
+              sx={{
+                textDecoration: 'none',
+                '&.active': {
+                  backgroundColor: (theme) => theme.palette.action.selected,
+                },
+              }}
+            >
               <ListItemIcon>
                 <AccountTreeIcon />
               </ListItemIcon>
@@ -62,6 +103,7 @@ const RootLayout = () => {
             bgcolor: (theme) => theme.palette.danger.main,
             p: 3,
             flexGrow: 1,
+            overflowY: 'auto',
           }}
         >
           <Outlet />
