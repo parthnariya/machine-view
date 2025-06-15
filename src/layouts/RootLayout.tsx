@@ -50,7 +50,7 @@ const RootLayout = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+      <Box sx={{ display: 'flex', flexGrow: 1, p: 0 }}>
         <Drawer
           variant="permanent"
           sx={{
@@ -79,9 +79,12 @@ const RootLayout = () => {
         <Container
           component="main"
           sx={{
-            p: 3,
+            padding: 0,
             flexGrow: 1,
             overflowY: 'auto',
+            '& .MuiContainer-root': {
+              padding: 0,
+            },
           }}
         >
           <Outlet />
