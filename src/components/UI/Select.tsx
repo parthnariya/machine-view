@@ -8,10 +8,12 @@ import {
 
 type SelectPropType = {
   label: string;
-  options: { value: number; label: string }[];
+  value: string | number;
+  options: { value: number | string; label: string }[];
+  onChange?: (value: number | string) => void;
 };
 
-const Select = ({ label, options }: SelectPropType) => {
+const Select = ({ value, onChange, label, options }: SelectPropType) => {
   return (
     <Box sx={{ minWidth: 120, backgroundColor: 'white', borderRadius: '8px' }}>
       <FormControl fullWidth size="small">
@@ -22,6 +24,13 @@ const Select = ({ label, options }: SelectPropType) => {
           labelId={`${label.toLocaleLowerCase()}-select-label`}
           id={`${label.toLocaleLowerCase()}-select`}
           label={label}
+          value={value}
+          onChange={(e) => {
+            e.preventDefault();
+            if (onChange) {
+              onChange(e.target.value);
+            }
+          }}
         >
           {options.map((option) => (
             <MenuItem key={option.value} value={option.value}>

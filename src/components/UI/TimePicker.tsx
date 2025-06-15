@@ -2,12 +2,15 @@ import { Box, FormControl } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker as MuiTimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
 
 type TimePickerPropType = {
   label: string;
+  value?: Date | null;
+  onChange?: (newDate: Date) => void;
 };
 
-const TimePicker = ({ label }: TimePickerPropType) => {
+const TimePicker = ({ label, value, onChange }: TimePickerPropType) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
@@ -16,6 +19,12 @@ const TimePicker = ({ label }: TimePickerPropType) => {
         <FormControl fullWidth size="small">
           <MuiTimePicker
             label={label}
+            value={dayjs(value)}
+            onChange={(value) => {
+              if (onChange && value) {
+                onChange(value.toDate());
+              }
+            }}
             sx={{
               '& .MuiPickersSectionList-root': {
                 width: '100%',

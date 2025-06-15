@@ -2,12 +2,15 @@ import { Box, FormControl } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker as MuiDatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 
 type DatePickerPropType = {
   label: string;
+  value?: Date | null;
+  onChange?: (newDate: Date) => void;
 };
 
-const DatePicker = ({ label }: DatePickerPropType) => {
+const DatePicker = ({ label, onChange, value }: DatePickerPropType) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
@@ -20,6 +23,12 @@ const DatePicker = ({ label }: DatePickerPropType) => {
               '& .MuiPickersSectionList-root': {
                 width: '100%',
               },
+            }}
+            value={dayjs(value)}
+            onChange={(value) => {
+              if (onChange && value) {
+                onChange(value.toDate());
+              }
             }}
             slotProps={{
               textField: {
