@@ -6,14 +6,12 @@ import {
   CssBaseline,
   Drawer,
   List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { Outlet, NavLink, useLocation } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 
+import { NavLink } from '@/components/NavLink';
 import { ROUTE_PATHS, ROUTE_PATHS_TITLES } from '@/routes/path';
 
 const RootLayout = () => {
@@ -65,42 +63,21 @@ const RootLayout = () => {
           }}
         >
           <List component="nav">
-            <ListItem
-              component={NavLink}
+            <NavLink
               to={ROUTE_PATHS.SCATTER_PAGE}
-              sx={{
-                textDecoration: 'none',
-                '&.active': {
-                  backgroundColor: (theme) => theme.palette.action.selected,
-                },
-              }}
-            >
-              <ListItemIcon>
-                <SsidChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Scatter Page" />
-            </ListItem>
-            <ListItem
-              component={NavLink}
+              label={ROUTE_PATHS_TITLES.SCATTER_PAGE}
+              prefixIcon={<SsidChartIcon />}
+            />
+            <NavLink
               to={ROUTE_PATHS.TREE_VISUALIZATION}
-              sx={{
-                textDecoration: 'none',
-                '&.active': {
-                  backgroundColor: (theme) => theme.palette.action.selected,
-                },
-              }}
-            >
-              <ListItemIcon>
-                <AccountTreeIcon />
-              </ListItemIcon>
-              <ListItemText primary="Tree Visualization" />
-            </ListItem>
+              label={ROUTE_PATHS_TITLES.TREE_VISUALIZATION}
+              prefixIcon={<AccountTreeIcon />}
+            />
           </List>
         </Drawer>
         <Box
           component="main"
           sx={{
-            bgcolor: (theme) => theme.palette.danger.main,
             p: 3,
             flexGrow: 1,
             overflowY: 'auto',
