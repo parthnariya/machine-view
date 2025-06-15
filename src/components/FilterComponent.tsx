@@ -16,7 +16,19 @@ type FilterFormData = {
   end_time: Date | null;
 };
 
-const FilterComponent = () => {
+export interface FilterValues {
+  machine_id: string;
+  tool_sequence?: string;
+  from_time: number;
+  to_time: number;
+}
+
+interface FilterComponentProps {
+  onFilterSubmit: (filters: FilterValues) => void;
+  onReset: () => void;
+}
+
+const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
   const { handleSubmit, control, reset } = useForm<FilterFormData>({
     defaultValues: {
       end_date: null,
@@ -29,7 +41,6 @@ const FilterComponent = () => {
   });
 
   const onSubmit: SubmitHandler<FilterFormData> = (data) => {
-    console.log(data);
     const getEpoch = (date: Date | null, time: Date | null): number | null => {
       if (!date || !time) return null;
       const combined = new Date(
@@ -40,20 +51,32 @@ const FilterComponent = () => {
         time.getMinutes(),
         time.getSeconds(),
       );
-      return combined.getTime();
+      return Math.floor(combined.getTime() / 1000);
     };
 
     const start_time = getEpoch(data.start_date, data.start_time);
     const end_time = getEpoch(data.end_date, data.end_time);
+    if (!data.machine_id || !start_time || !end_time) {
+      console.error('Please fill in all required fields');
+      return;
+    }
 
-    const result = {
+    const filters: FilterValues = {
       machine_id: data.machine_id,
-      tool: data.tool,
-      start_time,
-      end_time,
+      from_time: start_time,
+      to_time: end_time,
     };
 
-    console.log(result);
+    if (data.tool) {
+      filters.tool_sequence = data.tool;
+    }
+
+    onFilterSubmit(filters);
+  };
+
+  const handleReset = () => {
+    reset();
+    onReset();
   };
 
   return (
@@ -73,6 +96,7 @@ const FilterComponent = () => {
         <Controller
           name="machine_id"
           control={control}
+          rules={{ required: 'Machine is required' }}
           render={({ field }) => (
             <Select
               label="Machine"
@@ -85,6 +109,7 @@ const FilterComponent = () => {
         <Controller
           name="start_date"
           control={control}
+          rules={{ required: 'Start date is required' }}
           render={({ field }) => (
             <DatePicker
               label="Start Date"
@@ -96,6 +121,7 @@ const FilterComponent = () => {
         <Controller
           name="start_time"
           control={control}
+          rules={{ required: 'Start time is required' }}
           render={({ field }) => (
             <TimePicker
               label="Start Time"
@@ -107,6 +133,7 @@ const FilterComponent = () => {
         <Controller
           name="end_date"
           control={control}
+          rules={{ required: 'End date is required' }}
           render={({ field }) => (
             <DatePicker
               label="End Date"
@@ -118,6 +145,7 @@ const FilterComponent = () => {
         <Controller
           name="end_time"
           control={control}
+          rules={{ required: 'End time is required' }}
           render={({ field }) => (
             <TimePicker
               label="End Time"
@@ -148,7 +176,7 @@ const FilterComponent = () => {
         <Button
           variant="outlined"
           sx={{ textTransform: 'none' }}
-          onClick={() => reset()}
+          onClick={handleReset}
           type="button"
         >
           Show Comparison

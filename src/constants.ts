@@ -1,6 +1,6 @@
 export const machineOptions = [
-  { value: 'Machine1-SSP0173', label: 'SSP0173' },
-  { value: 'Machine2-SSP0167', label: 'SSP0167' },
+  { value: '1e776bfb2d2947648a8c01d60670af94', label: 'SSP0173' },
+  { value: '1e776bfb2d2947648a8c01d60670af94', label: 'SSP0167' },
 ];
 
 export const toolOptions = [
