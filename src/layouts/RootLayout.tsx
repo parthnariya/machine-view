@@ -3,6 +3,7 @@ import SsidChartIcon from '@mui/icons-material/SsidChart';
 import {
   AppBar,
   Box,
+  Container,
   CssBaseline,
   Drawer,
   List,
@@ -75,7 +76,7 @@ const RootLayout = () => {
             />
           </List>
         </Drawer>
-        <Box
+        <Container
           component="main"
           sx={{
             p: 3,
@@ -84,7 +85,7 @@ const RootLayout = () => {
           }}
         >
           <Outlet />
-        </Box>
+        </Container>
       </Box>
     </Box>
   );
