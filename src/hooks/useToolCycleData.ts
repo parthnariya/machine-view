@@ -1,33 +1,18 @@
 import { useEffect, useState } from 'react';
 
+import type { Filters, ScatteredPoint } from '@/types';
+
 import axios from '@/service/axiosService';
 
-type Point = {
-  epoch: number;
-  tool_sequence: string;
-  distance: number;
-  anomaly: boolean | null;
-  machine_id: string;
-  cycle_log_id: number;
-  start_time: string;
-  end_time: string;
-};
-interface Filters {
-  from_time: number;
-  to_time: number;
-  machine_id: string;
-  tool_sequence?: string;
-}
-
-export interface ToolCycleData {
-  points: Point[];
+export type ToolCycleData = {
+  points: ScatteredPoint[];
   threshold: number;
   loading: boolean;
   error: string | null;
-}
+};
 
 export function useToolCycleData(filters: Filters | null): ToolCycleData {
-  const [points, setPoints] = useState<Point[]>([]);
+  const [points, setPoints] = useState<ScatteredPoint[]>([]);
   const [threshold, setThreshold] = useState(0);
   const [loading, setLoading] = useState(false); // Changed to false initially
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +44,8 @@ export function useToolCycleData(filters: Filters | null): ToolCycleData {
           },
         );
 
-        const predictionPoints: Point[] = predictionRes.data.data || [];
+        const predictionPoints: ScatteredPoint[] =
+          predictionRes.data.data || [];
 
         const changelogRes = await axios.get(
           '/reportingapp/traceability/v2/prediction/changelog',
