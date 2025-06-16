@@ -15,7 +15,7 @@ import type { ScatteredPoint } from '@/types';
 type ScatteredChartPropType = {
   points: ScatteredPoint[];
   threshold?: number;
-  handleDotClick: (color: string) => void;
+  handleDotClick: (point: ScatteredPoint) => void;
 };
 
 const ScatteredChart = ({
@@ -83,13 +83,7 @@ const ScatteredChart = ({
           onClick={(data, _, event) => {
             event.preventDefault();
             if (handleDotClick) {
-              const color =
-                data.anomaly === true
-                  ? 'red'
-                  : data.anomaly == false
-                    ? 'green'
-                    : 'black';
-              handleDotClick(color);
+              handleDotClick(data);
             }
           }}
         >

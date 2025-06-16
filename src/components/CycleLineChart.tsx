@@ -18,42 +18,47 @@ export default function CycleLineChart({
   actual,
   ideal,
 }: CycleLineChartPropsType) {
-  const length = Math.max(Object.keys(actual).length, ideal.length);
+  const length = Math.min(Object.keys(actual).length, ideal.length);
 
-  const data = Array.from({ length }, (_, i) => ({
-    time: i,
-    actual: actual?.[i.toString()] ?? null,
-    ideal: ideal?.[i] ?? null,
-  }));
+  const series = [
+    // {
+    //   name: 'Ideal Signal',
+    //   data: Array.from({ length }, (_, i) => ({
+    //     time: i,
+    //     value: parseFloat(ideal?.[i]?.toFixed(3)) ?? null,
+    //   })),
+    //   stroke: '#90caf9',
+    // },
+    {
+      name: 'Actual Signal',
+      data: Object.values(actual)
+        .map((value, index) => ({
+          time: index,
+          value,
+        }))
+        .slice(0, length),
 
+      stroke: '#1e88e5',
+    },
+  ];
+  console.log(series);
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart
-        data={data}
         margin={{ top: 20, right: 30, bottom: 10, left: 0 }}
+        data={series}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="time"
           label={{ value: 'Time Index', position: 'bottom' }}
         />
-        <YAxis />
+        <YAxis dataKey="value" />
         <Tooltip />
         <Legend />
-        <Line
-          type="monotone"
-          dataKey="actual"
-          stroke="#1e88e5"
-          dot={false}
-          name="Actual Signal"
-        />
-        <Line
-          type="monotone"
-          dataKey="ideal"
-          stroke="#90caf9"
-          dot={false}
-          name="Ideal Signal"
-        />
+        {series.map((s) => (
+          <Line data={s.data} name={s.name} key={s.name} />
+        ))}
       </LineChart>
     </ResponsiveContainer>
   );

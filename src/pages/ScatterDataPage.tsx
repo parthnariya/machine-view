@@ -7,6 +7,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import type { ScatteredPoint } from '@/types';
+
 import CycleLineChart from '@/components/CycleLineChart';
 import FilterComponent, {
   type FilterValues,
@@ -18,14 +20,14 @@ import { useToolCycleData } from '@/hooks/useToolCycleData';
 
 const ScatterDataPage = () => {
   const [filters, setFilters] = useState<FilterValues | null>(null);
-  const [selectedDotColor, setSelectedDotColor] = useState<string | null>(null);
   const { points, threshold, loading, error } = useToolCycleData(filters);
   const {
     actual,
     error: cycleDataError,
     ideal,
     loading: cycleDataLoading,
-  } = useCycleTimeseriesData(filters?.tool_sequence, selectedDotColor);
+    fetchCycleData,
+  } = useCycleTimeseriesData();
 
   const handleFilterSubmit = (newFilters: FilterValues) => {
     setFilters(newFilters);
@@ -35,12 +37,12 @@ const ScatterDataPage = () => {
     setFilters(null);
   };
 
-  const handleDotClick = (color: string) => {
-    setSelectedDotColor(color);
+  const handleDotClick = async (point: ScatteredPoint) => {
+    await fetchCycleData(point, filters?.tool_sequence);
   };
 
   return (
-    <Container maxWidth="xl" sx={{ height: '100%', padding: 0 }}>
+    <Container maxWidth="xl" sx={{ padding: 0 }}>
       <FilterComponent
         onFilterSubmit={handleFilterSubmit}
         onReset={handleReset}
