@@ -1,5 +1,6 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+
+import axios from '@/service/axiosService';
 
 export type MachineNode = {
   id: number;
@@ -18,17 +19,17 @@ export type MachineMapData = {
 export const useMachineMapData = () => {
   const [data, setData] = useState<MachineMapData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMachineMap = async () => {
       try {
-        const response = await axios.get<MachineMapData>(
-          '/noviga/prodmachinemap/219',
-        );
+        const response = await axios.get('/noviga/prodmachinemap/219');
         setData(response.data);
       } catch (err) {
-        setError(err as Error);
+        if (err instanceof Error) {
+          setError('Failed to load Data!!');
+        }
       } finally {
         setLoading(false);
       }
