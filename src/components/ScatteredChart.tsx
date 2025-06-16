@@ -15,9 +15,14 @@ import type { ScatteredPoint } from '@/types';
 type ScatteredChartPropType = {
   points: ScatteredPoint[];
   threshold?: number;
+  handleDotClick: (color: string) => void;
 };
 
-const ScatteredChart = ({ points, threshold }: ScatteredChartPropType) => {
+const ScatteredChart = ({
+  points,
+  threshold,
+  handleDotClick,
+}: ScatteredChartPropType) => {
   return (
     <ResponsiveContainer width={'100%'} height={500}>
       <ScatterChart margin={{ top: 20, right: 30, bottom: 50, left: 20 }}>
@@ -71,7 +76,23 @@ const ScatteredChart = ({ points, threshold }: ScatteredChartPropType) => {
             return null;
           }}
         />
-        <Scatter name="Tool Cycle" data={points} shape="circle">
+        <Scatter
+          name="Tool Cycle"
+          data={points}
+          shape="circle"
+          onClick={(data, _, event) => {
+            event.preventDefault();
+            if (handleDotClick) {
+              const color =
+                data.anomaly === true
+                  ? 'red'
+                  : data.anomaly == false
+                    ? 'green'
+                    : 'black';
+              handleDotClick(color);
+            }
+          }}
+        >
           {points.map((point, idx) => (
             <Cell
               key={`cell-${idx}`}

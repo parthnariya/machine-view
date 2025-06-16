@@ -7,16 +7,25 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import CycleLineChart from '@/components/CycleLineChart';
 import FilterComponent, {
   type FilterValues,
 } from '@/components/FilterComponent';
 import ScatteredChart from '@/components/ScatteredChart';
 import Condition from '@/components/UI/Condition';
+import { useCycleTimeseriesData } from '@/hooks/useCycleTimeseriesData';
 import { useToolCycleData } from '@/hooks/useToolCycleData';
 
 const ScatterDataPage = () => {
   const [filters, setFilters] = useState<FilterValues | null>(null);
+  const [selectedDotColor, setSelectedDotColor] = useState<string | null>(null);
   const { points, threshold, loading, error } = useToolCycleData(filters);
+  const {
+    actual,
+    error: cycleDataError,
+    ideal,
+    loading: cycleDataLoading,
+  } = useCycleTimeseriesData(filters?.tool_sequence, selectedDotColor);
 
   const handleFilterSubmit = (newFilters: FilterValues) => {
     setFilters(newFilters);
@@ -24,6 +33,10 @@ const ScatterDataPage = () => {
 
   const handleReset = () => {
     setFilters(null);
+  };
+
+  const handleDotClick = (color: string) => {
+    setSelectedDotColor(color);
   };
 
   return (
@@ -56,7 +69,25 @@ const ScatterDataPage = () => {
             </Alert>
           </Condition.ElseIf>
           <Condition.Else>
-            <ScatteredChart points={points} threshold={threshold} />
+            <ScatteredChart
+              points={points}
+              threshold={threshold}
+              handleDotClick={handleDotClick}
+            />
+            <Condition>
+              <Condition.If condition={cycleDataLoading}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <CircularProgress size={20} />
+                  <Typography>Loading signal data...</Typography>
+                </Box>
+              </Condition.If>
+              <Condition.ElseIf condition={Boolean(cycleDataError)}>
+                <Alert severity="error">Error: {cycleDataError}</Alert>
+              </Condition.ElseIf>
+              <Condition.ElseIf condition={Boolean(actual) && Boolean(ideal)}>
+                <CycleLineChart actual={actual} ideal={ideal} />
+              </Condition.ElseIf>
+            </Condition>
           </Condition.Else>
         </Condition>
       </Container>
