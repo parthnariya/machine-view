@@ -12,10 +12,6 @@ type Point = {
   start_time: string;
   end_time: string;
 };
-
-type ToolMap = Record<string, number>;
-type ThresholdMap = Record<string, number>;
-
 interface Filters {
   from_time: number;
   to_time: number;
@@ -25,16 +21,14 @@ interface Filters {
 
 export interface ToolCycleData {
   points: Point[];
-  toolMap: ToolMap;
-  thresholdMap: ThresholdMap;
+  threshold: number;
   loading: boolean;
   error: string | null;
 }
 
 export function useToolCycleData(filters: Filters | null): ToolCycleData {
   const [points, setPoints] = useState<Point[]>([]);
-  const [toolMap, setToolMap] = useState<ToolMap>({});
-  const [thresholdMap, setThresholdMap] = useState<ThresholdMap>({});
+  const [threshold, setThreshold] = useState(0);
   const [loading, setLoading] = useState(false); // Changed to false initially
   const [error, setError] = useState<string | null>(null);
 
@@ -72,25 +66,21 @@ export function useToolCycleData(filters: Filters | null): ToolCycleData {
         );
         const changelog = changelogRes.data?.[0];
 
-        const tool_sequence_map: ToolMap =
-          changelog?.config_parameters?.tool_sequence_map ?? {};
         const learned_parameters = changelog?.learned_parameters ?? {};
 
-        const thresholds: ThresholdMap = {};
         for (const [tool, info] of Object.entries(learned_parameters)) {
           if (
             typeof info === 'object' &&
             info !== null &&
             'threshold' in info &&
-            typeof info.threshold === 'number'
+            typeof info.threshold === 'number' &&
+            tool === filters.tool_sequence
           ) {
-            thresholds[tool] = info.threshold;
+            setThreshold(info.threshold);
           }
         }
 
         setPoints(predictionPoints);
-        setToolMap(tool_sequence_map);
-        setThresholdMap(thresholds);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message || 'Error loading Scatter Data');
@@ -103,5 +93,5 @@ export function useToolCycleData(filters: Filters | null): ToolCycleData {
     fetchData();
   }, [filters]);
 
-  return { points, toolMap, thresholdMap, loading, error };
+  return { points, threshold, loading, error };
 }

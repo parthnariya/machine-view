@@ -6,6 +6,17 @@ import {
   Alert,
 } from '@mui/material';
 import { useState } from 'react';
+import {
+  CartesianGrid,
+  Cell,
+  ReferenceLine,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import FilterComponent, {
   type FilterValues,
@@ -15,8 +26,7 @@ import { useToolCycleData } from '@/hooks/useToolCycleData';
 
 const ScatterDataPage = () => {
   const [filters, setFilters] = useState<FilterValues | null>(null);
-  const { points, toolMap, thresholdMap, loading, error } =
-    useToolCycleData(filters);
+  const { points, threshold, loading, error } = useToolCycleData(filters);
 
   const handleFilterSubmit = (newFilters: FilterValues) => {
     setFilters(newFilters);
@@ -35,7 +45,7 @@ const ScatterDataPage = () => {
 
       <Container sx={{ padding: 2 }}>
         <Condition>
-          <Condition.If condition={Boolean(filters)}>
+          <Condition.If condition={!filters}>
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="h6" color="text.secondary">
                 Please submit the filter form to load data
@@ -56,20 +66,91 @@ const ScatterDataPage = () => {
             </Alert>
           </Condition.ElseIf>
           <Condition.Else>
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Data Results
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Total Points: {points.length}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Tools Available: {Object.keys(toolMap).length}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
-                Thresholds Available: {Object.keys(thresholdMap).length}
-              </Typography>
-            </Box>
+            <ResponsiveContainer width={'100%'} height={500}>
+              <ScatterChart
+                margin={{ top: 20, right: 30, bottom: 50, left: 20 }}
+              >
+                <CartesianGrid />
+                <XAxis
+                  dataKey="epoch"
+                  name="Time"
+                  domain={['auto', 'auto']}
+                  type="number"
+                  tickFormatter={(value) =>
+                    new Date(value * 1000).toLocaleDateString()
+                  }
+                  label={{ value: 'Time', position: 'bottom', offset: 10 }}
+                />
+                <YAxis
+                  dataKey="distance"
+                  name="Distance"
+                  label={{
+                    value: 'Distance',
+                    angle: -90,
+                    position: 'insideLeft',
+                  }}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length > 0) {
+                      const point = payload[0].payload;
+                      return (
+                        <div
+                          style={{
+                            background: 'white',
+                            padding: '8px',
+                            border: '1px solid #ccc',
+                          }}
+                        >
+                          <div>
+                            <strong>Epoch:</strong> {point.epoch}
+                          </div>
+                          <div>
+                            <strong>Start Time:</strong>{' '}
+                            {new Date(point.start_time).toLocaleString()}
+                          </div>
+                          <div>
+                            <strong>End Time:</strong>{' '}
+                            {new Date(point.end_time).toLocaleString()}
+                          </div>
+                          <div>
+                            <strong>Values</strong>{' '}
+                            {point.distance.toLocaleString()}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Scatter name="Tool Cycle" data={points} shape="circle">
+                  {points.map((point, idx) => (
+                    <Cell
+                      key={`cell-${idx}`}
+                      fill={
+                        point.anomaly === true
+                          ? '#c62828e1'
+                          : point.anomaly === false
+                            ? '#4caf4fcb'
+                            : '#3333339f'
+                      }
+                    />
+                  ))}
+                </Scatter>
+                {threshold !== undefined && (
+                  <ReferenceLine
+                    y={threshold}
+                    stroke="#EF9A9A"
+                    strokeDasharray="3 3"
+                    label={{
+                      value: `Threshold (${threshold})`,
+                      position: 'top',
+                      fill: '#c62828',
+                    }}
+                  />
+                )}
+              </ScatterChart>
+            </ResponsiveContainer>
           </Condition.Else>
         </Condition>
       </Container>
