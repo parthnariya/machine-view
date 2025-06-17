@@ -6,14 +6,17 @@ import {
   type Edge,
   type Node,
 } from '@xyflow/react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 
+import NodeEditModal from '@/components/NodeEditorModal';
 import Condition from '@/components/UI/Condition';
 import { useMachineMapData } from '@/hooks/useMachineMapData';
 import { getLayoutedElements } from '@/utils';
 
 const TreeVisualization = () => {
+  const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
+
   const { data, loading, error } = useMachineMapData();
 
   const getColor = useCallback(
@@ -29,9 +32,9 @@ const TreeVisualization = () => {
     if (!data) return { nodes: [], edges: [] };
 
     const nodes: Node[] = data.connected_nodes.map((node, index) => ({
-      id: node.id.toString(),
+      id: node.machine_id.toString(),
       data: { label: `${node.station_number} - ${node.name}` },
-      position: { x: 100 * index, y: 100 * index }, // basic layout
+      position: { x: 100 * index, y: 100 * index },
       style: {
         background: getColor(
           node.machine_id,
@@ -40,15 +43,14 @@ const TreeVisualization = () => {
         ),
         border: '1px solid #999',
         padding: 10,
-        width: 250,
       },
     }));
 
     const edges: Edge[] = data.connected_nodes.flatMap((node) =>
-      (node.input_stations || []).map((inputId) => ({
-        id: `e${inputId}-${node.id}`,
-        source: inputId.toString(),
-        target: node.id.toString(),
+      (node.input_stations || []).map((machineId) => ({
+        id: `e${machineId}-${node.machine_id}`,
+        source: machineId.toString(),
+        target: node.machine_id.toString(),
         animated: true,
       })),
     );
@@ -64,6 +66,8 @@ const TreeVisualization = () => {
         width: '100%',
         height: '100%',
         overflow: 'auto',
+        border: '1px solid',
+        borderRadius: '8px',
       }}
     >
       <Condition>
@@ -97,12 +101,27 @@ const TreeVisualization = () => {
           </Box>
         </Condition.ElseIf>
         <Condition.Else>
-          <ReactFlow nodes={nodes} edges={edges}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={(e, node) => {
+              e.preventDefault();
+              setSelectedNodeId(parseInt(node.id));
+            }}
+          >
             <Background />
             <Controls />
           </ReactFlow>
         </Condition.Else>
       </Condition>
+      {selectedNodeId !== null && (
+        <NodeEditModal
+          nodeId={selectedNodeId}
+          onClose={() => {
+            setSelectedNodeId(null);
+          }}
+        />
+      )}
     </Box>
   );
 };
