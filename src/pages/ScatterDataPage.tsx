@@ -1,10 +1,4 @@
-import {
-  Container,
-  Typography,
-  Box,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
+import { Typography, Box, CircularProgress, Alert } from '@mui/material';
 import { useState } from 'react';
 
 import type { ScatteredPoint } from '@/types';
@@ -42,13 +36,35 @@ const ScatterDataPage = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ padding: 0 }}>
-      <FilterComponent
-        onFilterSubmit={handleFilterSubmit}
-        onReset={handleReset}
-      />
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          boxShadow: 1,
+        }}
+      >
+        <FilterComponent
+          onFilterSubmit={handleFilterSubmit}
+          onReset={handleReset}
+        />
+      </Box>
 
-      <Container sx={{ padding: 2 }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflow: 'auto',
+          p: 2,
+          marginBottom: 6,
+        }}
+      >
         <Condition>
           <Condition.If condition={!filters}>
             <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -92,8 +108,8 @@ const ScatterDataPage = () => {
             </Condition>
           </Condition.Else>
         </Condition>
-      </Container>
-    </Container>
+      </Box>
+    </Box>
   );
 };
 
