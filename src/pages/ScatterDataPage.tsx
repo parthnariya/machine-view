@@ -21,9 +21,11 @@ const ScatterDataPage = () => {
     ideal,
     loading: cycleDataLoading,
     fetchCycleData,
+    resetState,
   } = useCycleTimeseriesData();
 
   const handleFilterSubmit = (newFilters: FilterValues) => {
+    resetState();
     setFilters(newFilters);
   };
 
@@ -34,6 +36,8 @@ const ScatterDataPage = () => {
   const handleDotClick = async (point: ScatteredPoint) => {
     await fetchCycleData(point, filters?.tool_sequence);
   };
+
+  console.log(`ideal ${ideal?.length}, keys ${Object.keys(actual).length}`);
 
   return (
     <Box
@@ -102,7 +106,9 @@ const ScatterDataPage = () => {
               <Condition.ElseIf condition={Boolean(cycleDataError)}>
                 <Alert severity="error">Error: {cycleDataError}</Alert>
               </Condition.ElseIf>
-              <Condition.ElseIf condition={Boolean(actual) && Boolean(ideal)}>
+              <Condition.ElseIf
+                condition={Object.keys(actual).length > 0 && ideal?.length > 0}
+              >
                 <CycleLineChart actual={actual} ideal={ideal} />
               </Condition.ElseIf>
             </Condition>

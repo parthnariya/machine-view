@@ -15,6 +15,7 @@ type CycleTimeseriesResult = {
     point: ScatteredPoint,
     tool_sequence?: string,
   ) => Promise<void>;
+  resetState: () => void;
 };
 
 export function useCycleTimeseriesData(): CycleTimeseriesResult {
@@ -75,5 +76,19 @@ export function useCycleTimeseriesData(): CycleTimeseriesResult {
     [],
   );
 
-  return { actual, ideal, loading, error, fetchCycleData: fetchData };
+  const resetState = () => {
+    setActual({});
+    setError(null);
+    setIdeal([]);
+    setLoading(false);
+  };
+
+  return {
+    actual,
+    ideal,
+    loading,
+    error,
+    fetchCycleData: fetchData,
+    resetState,
+  };
 }
