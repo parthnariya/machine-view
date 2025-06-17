@@ -1,4 +1,11 @@
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Chip,
+  CircularProgress,
+  Stack,
+  Typography,
+} from '@mui/material';
 import {
   Background,
   Controls,
@@ -120,8 +127,9 @@ const TreeVisualization = () => {
         width: '100%',
         height: '100%',
         overflow: 'auto',
-        border: '1px solid',
-        borderRadius: '8px',
+        backgroundColor: (theme) => theme.palette.background.paper,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Condition>
@@ -155,17 +163,38 @@ const TreeVisualization = () => {
           </Box>
         </Condition.ElseIf>
         <Condition.Else>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodeClick={(e, node) => {
-              e.preventDefault();
-              setSelectedNodeId(parseInt(node.id));
+          <Box
+            sx={{
+              flexGrow: 1,
             }}
           >
-            <Background />
-            <Controls />
-          </ReactFlow>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodeClick={(e, node) => {
+                e.preventDefault();
+                setSelectedNodeId(parseInt(node.id));
+              }}
+            >
+              <Background />
+              <Controls />
+            </ReactFlow>
+          </Box>
+          <Box sx={{ flexShrink: 0 }}>
+            <Typography
+              color="success"
+              fontWeight="600"
+              textAlign="center"
+              component="p"
+            >
+              Disconnect Nodes
+            </Typography>
+            <Stack direction="row" flexWrap="wrap" rowGap={1} columnGap={1.5}>
+              {data?.disconnected_nodes.map((node) => (
+                <Chip variant="filled" color="warning" label={node.name} />
+              ))}
+            </Stack>
+          </Box>
         </Condition.Else>
       </Condition>
       {selectedNodeId !== null && (
