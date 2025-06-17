@@ -32,6 +32,22 @@ const CycleLineChart = ({ actual, ideal }: CycleLineChartPropsType) => {
       chart: {
         type: 'line',
         margin: [30, 30, 60, 70],
+        zooming: {
+          type: 'xy',
+          mouseWheel: {
+            enabled: true,
+            sensitivity: 1.2,
+            type: 'xy',
+          },
+          resetButton: {
+            relativeTo: 'plotBox',
+            position: {
+              alignByTranslate: true,
+              verticalAlign: 'top',
+              align: 'right',
+            },
+          },
+        },
       },
       boost: {
         useGPUTranslations: true,

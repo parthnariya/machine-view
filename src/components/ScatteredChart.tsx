@@ -19,6 +19,22 @@ const ScatteredChart = ({
     chart: {
       type: 'scatter',
       margin: [20, 30, 50, 70],
+      zooming: {
+        type: 'xy',
+        mouseWheel: {
+          enabled: true,
+          sensitivity: 1.2,
+          type: 'xy',
+        },
+        resetButton: {
+          relativeTo: 'plotBox',
+          position: {
+            alignByTranslate: true,
+            verticalAlign: 'top',
+            align: 'right',
+          },
+        },
+      },
     },
     boost: {
       useGPUTranslations: true,
