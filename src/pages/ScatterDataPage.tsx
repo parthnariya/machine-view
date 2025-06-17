@@ -37,8 +37,6 @@ const ScatterDataPage = () => {
     await fetchCycleData(point, filters?.tool_sequence);
   };
 
-  console.log(`ideal ${ideal?.length}, keys ${Object.keys(actual).length}`);
-
   return (
     <Box
       sx={{
