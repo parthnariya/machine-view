@@ -9,12 +9,16 @@ export type ToolCycleData = {
   threshold: number;
   loading: boolean;
   error: string | null;
+  unprocessedData: Record<string, number>;
 };
 
 export function useToolCycleData(filters: Filters | null): ToolCycleData {
   const [points, setPoints] = useState<ScatteredPoint[]>([]);
+  const [unprocessedData, setUnProcessData] = useState<Record<string, number>>(
+    {},
+  );
   const [threshold, setThreshold] = useState(0);
-  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,7 +49,9 @@ export function useToolCycleData(filters: Filters | null): ToolCycleData {
         );
 
         const predictionPoints: ScatteredPoint[] =
-          predictionRes.data.data || [];
+          predictionRes?.data?.data?.points || [];
+
+        setUnProcessData(predictionRes?.data?.data?.unprocessed_sequences);
 
         const changelogRes = await axios.get(
           '/reportingapp/traceability/v2/prediction/changelog',
@@ -79,5 +85,5 @@ export function useToolCycleData(filters: Filters | null): ToolCycleData {
     fetchData();
   }, [filters]);
 
-  return { points, threshold, loading, error };
+  return { points, unprocessedData, threshold, loading, error };
 }

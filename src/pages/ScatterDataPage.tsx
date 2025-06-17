@@ -1,4 +1,11 @@
-import { Typography, Box, CircularProgress, Alert } from '@mui/material';
+import {
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
+  Stack,
+  Chip,
+} from '@mui/material';
 import { useState } from 'react';
 
 import type { ScatteredPoint } from '@/types';
@@ -14,7 +21,8 @@ import { useToolCycleData } from '@/hooks/useToolCycleData';
 
 const ScatterDataPage = () => {
   const [filters, setFilters] = useState<FilterValues | null>(null);
-  const { points, threshold, loading, error } = useToolCycleData(filters);
+  const { points, threshold, loading, error, unprocessedData } =
+    useToolCycleData(filters);
   const {
     actual,
     error: cycleDataError,
@@ -89,6 +97,31 @@ const ScatterDataPage = () => {
             </Alert>
           </Condition.ElseIf>
           <Condition.Else>
+            <Typography
+              component="h4"
+              fontSize="14px"
+              fontWeight="600"
+              textAlign="center"
+            >
+              Unprocessed Data
+            </Typography>
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              alignItems="center"
+              justifyContent="center"
+              rowGap={1}
+              columnGap={1}
+            >
+              {Object.entries(unprocessedData).map(([key, value]) => (
+                <Chip
+                  size="medium"
+                  label={`${key} : ${value}`}
+                  sx={{ backgroundColor: (theme) => theme.palette.grey[100] }}
+                  key={`${key}-${value}`}
+                />
+              ))}
+            </Stack>
             <ScatteredChart
               points={points}
               threshold={threshold}
