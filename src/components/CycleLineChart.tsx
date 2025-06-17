@@ -21,28 +21,37 @@ const CycleLineChart = ({ actual, ideal }: CycleLineChartPropsType) => {
       .map(([time, value]) => [parseFloat(time) * 1000, value])
       .sort((a, b) => a[0] - b[0]);
 
+    const allTimes = [
+      ...idealData.map(([time]) => time),
+      ...actualData.map(([time]) => time),
+    ];
+    const minTime = Math.min(...allTimes);
+    const maxTime = Math.max(...allTimes);
+
     return {
       chart: {
         type: 'line',
-        margin: [20, 30, 10, 0],
-        height: 400,
+        margin: [30, 30, 60, 70],
       },
       boost: {
         useGPUTranslations: true,
         seriesThreshold: 1000,
       },
-      title: { text: undefined },
       xAxis: {
         type: 'datetime',
         title: {
           text: 'Time (seconds)',
         },
         labels: {
-          formatter: ({ value }) => {
-            const seconds = Number(value) / 1000;
-            return seconds.toFixed(3);
+          enabled: true,
+          formatter: function () {
+            const seconds = Number(this.value) / 1000;
+            return Number.isFinite(seconds) ? seconds.toString() : '';
           },
         },
+        tickInterval: 1000,
+        min: minTime,
+        max: maxTime,
       },
       yAxis: {
         title: {
@@ -67,8 +76,9 @@ const CycleLineChart = ({ actual, ideal }: CycleLineChartPropsType) => {
         },
       },
       legend: {
-        enabled: true,
+        enabled: false,
       },
+      title: { text: undefined },
       series: [
         {
           type: 'line',
@@ -84,11 +94,20 @@ const CycleLineChart = ({ actual, ideal }: CycleLineChartPropsType) => {
         },
       ],
       credits: { enabled: false },
+      responsive: {
+        rules: [
+          {
+            condition: {
+              minHeight: 500,
+            },
+          },
+        ],
+      },
     };
   }, [actual, ideal]);
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
+    <div style={{ width: '100%', minHeight: '500px', marginTop: '20px' }}>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

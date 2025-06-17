@@ -18,8 +18,7 @@ const ScatteredChart = ({
   const options: Highcharts.Options = {
     chart: {
       type: 'scatter',
-      margin: [20, 30, 50, 20],
-      height: 500,
+      margin: [20, 30, 50, 70],
     },
     boost: {
       useGPUTranslations: true,
@@ -52,10 +51,6 @@ const ScatteredChart = ({
     title: { text: undefined },
     xAxis: {
       type: 'datetime',
-      title: {
-        text: 'Time',
-        offset: 30,
-      },
       labels: {
         formatter: function ({ value }) {
           return new Date(Number(value) * 1000).toLocaleDateString('en-US', {
@@ -71,9 +66,8 @@ const ScatteredChart = ({
       type: 'linear',
       title: {
         text: 'Distance',
-        offset: 30,
+        offset: 50,
         rotation: -90,
-        margin: 10,
       },
       gridLineWidth: 1,
       plotLines: [
@@ -90,6 +84,7 @@ const ScatteredChart = ({
         },
       ],
     },
+    legend: { enabled: false },
     tooltip: {
       useHTML: true,
       formatter: function () {
@@ -127,7 +122,7 @@ const ScatteredChart = ({
   };
 
   return (
-    <div style={{ width: '100%', height: '500px' }}>
+    <div style={{ width: '100%' }}>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
