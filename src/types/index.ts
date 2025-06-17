@@ -15,3 +15,11 @@ export type Filters = {
   machine_id: string;
   tool_sequence?: string;
 };
+
+export type MachineNode = {
+  id: number;
+  machine_id: number;
+  name: string;
+  station_number: string;
+  input_stations: number[];
+};

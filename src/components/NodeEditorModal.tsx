@@ -156,8 +156,8 @@ const NodeEditModal = ({ nodeId, onClose, onSave }: Props) => {
                 renderValue={(selected) => selected.join(', ')}
               >
                 {data?.connected_nodes.map((node) => (
-                  <MenuItem key={node.id} value={node.id}>
-                    <Checkbox checked={field.value.includes(node.id)} />
+                  <MenuItem key={node.id} value={node.machine_id}>
+                    <Checkbox checked={field.value.includes(node.machine_id)} />
                     <ListItemText
                       primary={`${node.station_number} - ${node.name}`}
                     />

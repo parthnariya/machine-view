@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import axios from '@/service/axiosService';
+import type { MachineNode } from '@/types';
 
-export type MachineNode = {
-  id: number;
-  machine_id: number;
-  name: string;
-  station_number: string;
-  input_stations: number[];
-};
+import axios from '@/service/axiosService';
 
 export type MachineMapData = {
   bypass_list: number[];
