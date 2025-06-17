@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject } from 'react-router';
+import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
 
 import { ROUTE_PATHS } from './path';
 
@@ -13,6 +13,9 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <Navigate to={ROUTE_PATHS.SCATTER_PAGE} replace />,
+      },
+      {
         path: ROUTE_PATHS.SCATTER_PAGE,
         element: <ScatterPage />,
       },
