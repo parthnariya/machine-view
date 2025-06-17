@@ -97,12 +97,13 @@ const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
           name="machine_id"
           control={control}
           rules={{ required: 'Machine is required' }}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <Select
               label="Machine"
               options={machineOptions}
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />
@@ -110,11 +111,12 @@ const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
           name="start_date"
           control={control}
           rules={{ required: 'Start date is required' }}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <DatePicker
               label="Start Date"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />
@@ -122,11 +124,12 @@ const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
           name="start_time"
           control={control}
           rules={{ required: 'Start time is required' }}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <TimePicker
               label="Start Time"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />
@@ -134,11 +137,12 @@ const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
           name="end_date"
           control={control}
           rules={{ required: 'End date is required' }}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <DatePicker
               label="End Date"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />
@@ -146,23 +150,26 @@ const FilterComponent = ({ onFilterSubmit, onReset }: FilterComponentProps) => {
           name="end_time"
           control={control}
           rules={{ required: 'End time is required' }}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <TimePicker
               label="End Time"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />
         <Controller
           name="tool"
           control={control}
-          render={({ field }) => (
+          rules={{ required: 'Tool is required' }}
+          render={({ field, fieldState }) => (
             <Select
               label="Select Tool"
               options={toolOptions}
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
             />
           )}
         />

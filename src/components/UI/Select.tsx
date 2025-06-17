@@ -11,12 +11,13 @@ type SelectPropType = {
   value: string | number;
   options: { value: number | string; label: string }[];
   onChange?: (value: number | string) => void;
+  error?: string;
 };
 
-const Select = ({ value, onChange, label, options }: SelectPropType) => {
+const Select = ({ value, onChange, label, options, error }: SelectPropType) => {
   return (
     <Box sx={{ minWidth: 120, backgroundColor: 'white', borderRadius: '8px' }}>
-      <FormControl fullWidth size="small">
+      <FormControl fullWidth size="small" error={Boolean(error)}>
         <InputLabel id={`${label.toLocaleLowerCase()}-select-label`}>
           {label}
         </InputLabel>

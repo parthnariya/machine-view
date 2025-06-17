@@ -8,9 +8,10 @@ type DatePickerPropType = {
   label: string;
   value?: Date | null;
   onChange?: (newDate: Date) => void;
+  error?: string;
 };
 
-const DatePicker = ({ label, onChange, value }: DatePickerPropType) => {
+const DatePicker = ({ label, onChange, value, error }: DatePickerPropType) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
@@ -40,6 +41,7 @@ const DatePicker = ({ label, onChange, value }: DatePickerPropType) => {
                   htmlFor: `${label.toLowerCase()}-datepicker`,
                   id: `${label.toLowerCase()}-datepicker-label`,
                 },
+                error: !!error,
               },
             }}
           />
