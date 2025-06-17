@@ -22,6 +22,8 @@
     "@xyflow/react": "^12.7.0",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
+    "highcharts": "^12.2.0",
+    "highcharts-react-official": "^3.2.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.0",

@@ -1,14 +1,6 @@
-import {
-  CartesianGrid,
-  Cell,
-  ReferenceLine,
-  ResponsiveContainer,
-  Scatter,
-  ScatterChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from 'recharts';
+import Highcharts from 'highcharts';
+import 'highcharts/modules/boost';
+import HighchartsReact from 'highcharts-react-official';
 
 import type { ScatteredPoint } from '@/types';
 
@@ -23,97 +15,121 @@ const ScatteredChart = ({
   threshold,
   handleDotClick,
 }: ScatteredChartPropType) => {
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'scatter',
+      margin: [20, 30, 50, 20],
+      height: 500,
+    },
+    boost: {
+      useGPUTranslations: true,
+      seriesThreshold: 1000,
+    },
+    series: [
+      {
+        type: 'scatter',
+        turboThreshold: 0,
+        data: points.map((point) => ({
+          x: point.epoch,
+          y: point.distance,
+          tool_sequence: point.tool_sequence,
+          distance: point.distance,
+          epoch: point.epoch,
+          anomaly: point.anomaly,
+          machine_id: point.machine_id,
+          cycle_log_id: point.cycle_log_id,
+          start_time: point.start_time,
+          end_time: point.end_time,
+          color:
+            point.anomaly === true
+              ? '#c62828e1'
+              : point.anomaly === false
+                ? '#4caf4fcb'
+                : '#3333339f',
+        })),
+      },
+    ],
+    title: { text: undefined },
+    xAxis: {
+      type: 'datetime',
+      title: {
+        text: 'Time',
+        offset: 30,
+      },
+      labels: {
+        formatter: function ({ value }) {
+          return new Date(Number(value) * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+        },
+      },
+      gridLineWidth: 0,
+    },
+    yAxis: {
+      type: 'linear',
+      title: {
+        text: 'Distance',
+        offset: 30,
+        rotation: -90,
+        margin: 10,
+      },
+      gridLineWidth: 1,
+      plotLines: [
+        {
+          value: threshold,
+          color: '#EF9A9A',
+          dashStyle: 'Dash',
+          width: 2,
+          label: {
+            text: `Threshold ${threshold}`,
+            style: { color: '#c62828' },
+            align: 'center',
+          },
+        },
+      ],
+    },
+    tooltip: {
+      useHTML: true,
+      formatter: function () {
+        const detailPoint = this.options as unknown as ScatteredPoint;
+
+        return `
+          <div style="background: white; padding: 8px; border: 1px solid #ccc;">
+            <div><strong>Epoch:</strong> ${detailPoint.epoch}</div>
+            <div><strong>Start Time:</strong> ${new Date(detailPoint.start_time).toLocaleString('en-US')}</div>
+            <div><strong>End Time:</strong> ${new Date(detailPoint.end_time).toLocaleString('en-US')}</div>
+            <div><strong>Value:</strong> ${detailPoint.distance}</div>
+          </div>
+        `;
+      },
+    },
+    plotOptions: {
+      scatter: {
+        marker: {
+          radius: 5,
+          symbol: 'circle',
+        },
+        point: {
+          events: {
+            click: function (this, event) {
+              event.preventDefault();
+              const newPoint = this.options as unknown as ScatteredPoint;
+              handleDotClick(newPoint);
+            },
+          },
+        },
+      },
+    },
+
+    credits: { enabled: false },
+  };
+
   return (
-    <ResponsiveContainer width={'100%'} height={500}>
-      <ScatterChart margin={{ top: 20, right: 30, bottom: 50, left: 20 }}>
-        <CartesianGrid />
-        <XAxis
-          dataKey="epoch"
-          name="Time"
-          domain={['auto', 'auto']}
-          type="number"
-          tickFormatter={(value) => new Date(value * 1000).toLocaleDateString()}
-          label={{ value: 'Time', position: 'bottom', offset: 10 }}
-        />
-        <YAxis
-          dataKey="distance"
-          name="Distance"
-          label={{
-            value: 'Distance',
-            angle: -90,
-            position: 'insideLeft',
-          }}
-        />
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length > 0) {
-              const point = payload[0].payload;
-              return (
-                <div
-                  style={{
-                    background: 'white',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                  }}
-                >
-                  <div>
-                    <strong>Epoch:</strong> {point.epoch}
-                  </div>
-                  <div>
-                    <strong>Start Time:</strong>{' '}
-                    {new Date(point.start_time).toLocaleString()}
-                  </div>
-                  <div>
-                    <strong>End Time:</strong>{' '}
-                    {new Date(point.end_time).toLocaleString()}
-                  </div>
-                  <div>
-                    <strong>Values</strong> {point.distance.toLocaleString()}
-                  </div>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
-        <Scatter
-          name="Tool Cycle"
-          data={points}
-          shape="circle"
-          onClick={(data, _, event) => {
-            event.preventDefault();
-            if (handleDotClick) {
-              handleDotClick(data);
-            }
-          }}
-        >
-          {points.map((point, idx) => (
-            <Cell
-              key={`cell-${idx}`}
-              fill={
-                point.anomaly === true
-                  ? '#c62828e1'
-                  : point.anomaly === false
-                    ? '#4caf4fcb'
-                    : '#3333339f'
-              }
-            />
-          ))}
-        </Scatter>
-        {threshold !== undefined && (
-          <ReferenceLine
-            y={threshold}
-            stroke="#EF9A9A"
-            strokeDasharray="3 3"
-            label={{
-              value: `Threshold (${threshold})`,
-              position: 'top',
-              fill: '#c62828',
-            }}
-          />
-        )}
-      </ScatterChart>
-    </ResponsiveContainer>
+    <div style={{ width: '100%', height: '500px' }}>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
   );
 };
 
