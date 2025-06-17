@@ -11,6 +11,7 @@ import '@xyflow/react/dist/style.css';
 
 import Condition from '@/components/UI/Condition';
 import { useMachineMapData } from '@/hooks/useMachineMapData';
+import { getLayoutedElements } from '@/utils';
 
 const TreeVisualization = () => {
   const { data, loading, error } = useMachineMapData();
@@ -27,7 +28,7 @@ const TreeVisualization = () => {
   const { nodes, edges } = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
 
-    const nodes: Node[] = data.prod_machine_map.map((node, index) => ({
+    const nodes: Node[] = data.connected_nodes.map((node, index) => ({
       id: node.id.toString(),
       data: { label: `${node.station_number} - ${node.name}` },
       position: { x: 100 * index, y: 100 * index }, // basic layout
@@ -43,7 +44,7 @@ const TreeVisualization = () => {
       },
     }));
 
-    const edges: Edge[] = data.prod_machine_map.flatMap((node) =>
+    const edges: Edge[] = data.connected_nodes.flatMap((node) =>
       (node.input_stations || []).map((inputId) => ({
         id: `e${inputId}-${node.id}`,
         source: inputId.toString(),
@@ -51,7 +52,10 @@ const TreeVisualization = () => {
         animated: true,
       })),
     );
-    return { nodes, edges };
+
+    const layoutElements = getLayoutedElements(nodes, edges);
+
+    return { nodes: layoutElements.nodes, edges: layoutElements.edges };
   }, [data]);
 
   return (
@@ -92,12 +96,12 @@ const TreeVisualization = () => {
             <Alert severity="error">{error ?? ''}</Alert>
           </Box>
         </Condition.ElseIf>
-        <Condition>
-          <ReactFlow nodes={nodes} edges={edges} fitView>
+        <Condition.Else>
+          <ReactFlow nodes={nodes} edges={edges}>
             <Background />
             <Controls />
           </ReactFlow>
-        </Condition>
+        </Condition.Else>
       </Condition>
     </Box>
   );

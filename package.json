@@ -13,6 +13,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.1",

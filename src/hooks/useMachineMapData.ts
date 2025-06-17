@@ -13,7 +13,8 @@ export type MachineNode = {
 export type MachineMapData = {
   bypass_list: number[];
   not_allowed_list: number[];
-  prod_machine_map: MachineNode[];
+  connected_nodes: MachineNode[];
+  disconnected_nodes: Omit<MachineNode, 'input_stations'>[];
 };
 
 export const useMachineMapData = () => {
