@@ -1,8 +1,8 @@
 import { Box, FormControl } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker as MuiDatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
+import moment from 'moment';
 
 type DatePickerPropType = {
   label: string;
@@ -13,7 +13,7 @@ type DatePickerPropType = {
 
 const DatePicker = ({ label, onChange, value, error }: DatePickerPropType) => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       <Box
         sx={{ minWidth: 120, backgroundColor: 'white', borderRadius: '8px' }}
       >
@@ -25,7 +25,7 @@ const DatePicker = ({ label, onChange, value, error }: DatePickerPropType) => {
                 width: '100%',
               },
             }}
-            value={dayjs(value)}
+            value={moment(value)}
             onChange={(value) => {
               if (onChange && value) {
                 onChange(value.toDate());
